@@ -1,0 +1,121 @@
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neighborhood Map</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ"
+        crossorigin="anonymous">
+    <script>
+        // Example starter JavaScript for disabling form submissions if there are invalid fields
+        (function () {
+            'use strict';
+            window.addEventListener('load', function () {
+                // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                var forms = document.getElementsByClassName('needs-validation');
+                var search = document.getElementById('search');
+                // Loop over them and prevent submission
+                var validation = Array.prototype.filter.call(forms, function (form) {
+                    search.addEventListener('click', function (event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+    </script>
+</head>
+
+<body>
+    <div class="conteiner-fluid">
+        <div id="map"></div>
+        <div id="search-panel">
+            <header class="search-panel-head">
+                <div class="row">
+                    <div class="col-md-3" style="padding-top: 2px;">
+                        <span class="bolder" aria-hidden="true" data-toggle="collapse" data-target="#search-panel-body" aria-expanded="true">
+                            <i class="fas fa-bars"></i>
+                        </span>
+                    </div>
+                    <div class="col-md-9">
+                        <span class="bolder">Search Places</span>
+                    </div>
+                </div>
+
+            </header>
+            <div id="search-panel-body" aria-expanded="true" class="in collapse show">
+                <section class="search-panel-body">
+                    <form class="needs-validation" novalidate>
+                        <div class="input-group mb-3">
+                            <input type="text" id="cityName" class="form-control" placeholder="Enter city name" aria-describedby="inputGroupPrepend"
+                                required>
+
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button" data-bind="click: centerToCity" id="search">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                            <div class="invalid-feedback">
+                                Please provide a valid city.
+                            </div>
+                        </div>
+                    </form>
+                </section>
+                <section id="errorMsg" class="search-panel-body errorMsg">
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong>Error: </strong>Can't find data!
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                </section>
+                <section class="filter-search search-panel-body">
+                    <p class="bolder">Filter your search: </p>
+                    <ul data-bind="foreach: categoryList" class="d-flex flex-wrap">
+                        <li class="category-list">
+                            <img src="" data-bind="click: $parent.findPlaces, attr: {src: imgSrc, alt: name, title: name}" class="category-img">
+                            <figcaption data-bind="text: name" class="text-center"></figcaption>
+                        </li>
+                    </ul>
+                </section>
+                <section class="search-panel-head">
+                    <span class="bolder">Search Result</span>
+                    <br>
+                    <span data-bind="text: city"></span> (
+                    <span data-bind="text: category"></span> )
+                </section>
+                <section class="search-data search-panel-body">
+                    <ul data-bind="foreach: markers" id="searchData">
+                        <li data-bind="text: title, click: $parent.bounceMarker"></li>
+                    </ul>
+                </section>
+                <footer class="search-panel-head">
+                    Searching using
+                    <a href="https://developer.foursquare.com/" target="new" title="Foursquare">
+                        <img src="img/foursquare-logo.png" class="footer-img">
+                    </a>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+    <!-- include required javascript files -->
+    <script src="js/lib/knockout-3.2.0.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/map-style.js"></script>
+
+    <!-- loading map asynchronosly using google map api on page load -->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?libraries=places,geometry,drawing&key=AIzaSyBAiL9O43qqOCS0GW8BS5-vQsOa833vVLE&v=3&callback=viewMap"
+        onerror="googleMapError();">
+        </script>
+</body>
+
+</html>
