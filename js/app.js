@@ -1,5 +1,7 @@
+// global variable map
 var map;
 
+// an array of place category used in filter search
 var placeCategoryModel = [
     {
         name: 'Restaurant',
@@ -35,9 +37,9 @@ var placeCategoryModel = [
     }
 ]
 
-// This function takes in a COLOR, and then creates a new marker
-// icon of that color. The icon will be 21 px wide by 34 high, have an origin
-// of 0, 0 and be anchored at 10, 34).
+/* This function takes in a COLOR, and then creates a new marker
+icon of that color. The icon will be 21 px wide by 34 high, have an origin
+of 0, 0 and be anchored at 10, 34). */
 function makeMarkerIcon(markerColor) {
     var markerImage = new google.maps.MarkerImage(
         'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|' + markerColor +
@@ -49,11 +51,13 @@ function makeMarkerIcon(markerColor) {
     return markerImage;
 }
 
+// creates new category object with data
 var Category = function (data) {
     this.name = ko.observable(data.name);
     this.imgSrc = ko.observable(data.imgSrc);
 };
 
+// creates an empty place object
 var Place = function () {
     this.lat = '';
     this.lng = '';
@@ -132,14 +136,18 @@ var ViewModel = function () {
         } else {
             query = this.name();
         }
+
+        // empty an array of places and markers
         self.places().splice(0, self.places().length);
-        for(var i = 0; i < self.markers().length; i++) {
+        for (var i = 0; i < self.markers().length; i++) {
             self.markers()[i].setMap(null);
         }
         self.markers().splice(0, self.markers().length);
 
+        // foursquare API URL
         var fsUrl = "https://api.foursquare.com/v2/venues/search?" + "client_id=" + fsClientId + "&client_secret=" + fsClientSecret + "&v=20180809&near=" + near + "&query=" + query + '&limit=8&intent=checkin';
         var places;
+        // gets data in JSON format asynchronously
         $.getJSON(fsUrl).done(function (data) {
             if (category == 'All') {
                 self.category('All');
@@ -218,17 +226,18 @@ var ViewModel = function () {
                 infoWindow.marker = null;
             });
 
+            // build a complete address
             var address = '';
-            for(var i = 0; i < marker.address.length; i++) {
+            for (var i = 0; i < marker.address.length; i++) {
                 address += marker.address[i] + ', ';
             }
             var contentString = '<div class="media">' +
-                                '<div class="media-body">' +
-                                '<h5 class="mt-0">' + marker.title + '</h5>' +
-                                address +
-                                '</div>' +
-                                '</div>';
-            
+                '<div class="media-body">' +
+                '<h5 class="mt-0">' + marker.title + '</h5>' +
+                address +
+                '</div>' +
+                '</div>';
+
             infoWindow.setContent(contentString);
 
             // Open the infowindow on the correct marker.
@@ -237,6 +246,7 @@ var ViewModel = function () {
 
     };
 
+    // this function is called when either marker or name in list are clicked.
     this.bounceMarker = function () {
         self.populateInfoWindow(this, self.largeInfoWindow);
         this.setAnimation(google.maps.Animation.BOUNCE);
@@ -245,14 +255,16 @@ var ViewModel = function () {
         }).bind(this), 2000);
     };
 
-
+    // initialize the map
     this.initMap();
 }
 
+// this function generates an error message if map can't be loaded.
 function googleMapError() {
     alert("Can't load map, Please try again!");
 }
 
+// when the map is loaded, this function is called asynchronously.
 function viewMap() {
     ko.applyBindings(new ViewModel());
 }
